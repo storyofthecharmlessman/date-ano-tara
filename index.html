@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>date? ano tara? ✨</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
+
+        :root {
+            --bg-color: #ffeef2;
+            --card-bg: #ffffff;
+            --primary-pink: #ffb7b2;
+            --accent-peach: #ffdac1;
+            --mint-green: #e2f0cb;
+            --soft-purple: #e8d7ff;
+            --text-color: #6d5959;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            color: var(--primary-pink);
+            animation: fall linear infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) translateX(100px) rotate(360deg); opacity: 0; }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 30px;
+            padding: 35px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 15px 30px rgba(255, 183, 178, 0.3);
+            text-align: center;
+            z-index: 10;
+            border: 4px solid #fff;
+            position: relative;
+        }
+
+        .step {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-size: 26px;
+            margin-bottom: 15px;
+            color: #ff9aa2;
+            text-shadow: 1px 1px 0px #fff;
+        }
+
+        p {
+            font-size: 14px;
+            color: #a38f8f;
+            margin-bottom: 15px;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 25px;
+            position: relative;
+            height: 120px; 
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+        }
+
+        .btn-yes {
+            background-color: var(--mint-green);
+            color: var(--text-color);
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.05);
+            background-color: #cbe0b0;
+        }
+
+        .btn-no {
+            background-color: var(--primary-pink);
+            color: white;
+            transition: left 0.1s ease-out, top 0.1s ease-out;
+            z-index: 999;
+            position: absolute; 
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .option-card {
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .option-card:hover {
+            transform: translateY(-2px);
+            background: var(--accent-peach);
+        }
+
+        .option-card.selected {
+            border-color: #ff9aa2;
+            background: var(--accent-peach);
+        }
+
+        .option-icon {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .option-label {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .datetime-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #ff9aa2;
+            padding-left: 5px;
+        }
+
+        input[type="date"], input[type="time"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--accent-peach);
+            border-radius: 15px;
+            background-color: #fff;
+            color: var(--text-color);
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--primary-pink);
+        }
+        .btn-next {
+            background-color: var(--primary-pink);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-next:hover {
+            background-color: #ff9aa2;
+        }
+
+        .receipt-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .receipt {
+            background: #ffffff;
+            border: 2px solid #f0e0e0;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 340px;
+            padding: 25px 20px;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            color: #5c4d4d;
+            text-align: left;
+        }
+
+        .receipt::before {
+            content: "";
+            position: absolute;
+            top: -8px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(-135deg, var(--card-bg) 4px, transparent 0), linear-gradient(135deg, var(--card-bg) 4px, transparent 0);
+            background-size: 8px 8px;
+        }
+
+        .receipt::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(-45deg, #ffffff 4px, transparent 0), linear-gradient(45deg, #ffffff 4px, transparent 0);
+            background-size: 8px 8px;
+        }
+
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px dashed #ffced2;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .receipt-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ff9aa2;
+            letter-spacing: 1px;
+        }
+
+        .receipt-subtitle {
+            font-size: 11px;
+            color: #b5a2a2;
+            margin-top: 2px;
+        }
+
+        .receipt-row {
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .receipt-row.flex-row {
+            display: table;
+            width: 100%;
+        }
+
+        .receipt-label {
+            display: table-cell;
+            font-weight: 600;
+            color: #ff9aa2;
+            width: 90px;
+            vertical-align: top;
+        }
+
+        .receipt-value {
+            display: table-cell;
+            color: #7a6666;
+            text-align: right;
+            vertical-align: top;
+        }
+
+        .receipt-divider {
+            border-top: 2px dashed #ffced2;
+            margin: 15px 0;
+        }
+
+        .receipt-footer {
+            text-align: center;
+            font-size: 12px;
+            color: #ff9aa2;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        .btn-download {
+            background-color: var(--soft-purple);
+            color: var(--text-color);
+            width: 100%;
+        }
+
+        .btn-download:hover {
+            background-color: #dcd0ff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hearts-container" id="heartsContainer"></div>
+
+    <div class="card">
+        <div class="step active" id="step1">
+            <h2>date tayo, ano tara? ✨</h2>
+            <div style="font-size: 60px; margin-bottom: 10px;">🥺👉👈</div>
+            <div class="btn-container" id="btnContainer">
+                <button class="btn btn-yes" onclick="nextStep(2)">Yes!</button>
+                <button class="btn btn-no" id="noBtn">No</button>
+            </div>
+        </div>
+
+        <div class="step" id="step2">
+            <h2>ano gusto mo kainin? 🥞</h2>
+            <p>pwede mo piliin kahit ano baby girl</p>
+            <div class="options-grid">
+                <div class="option-card" onclick="toggleOption('food', 'ramen 🍜', this)">
+                    <div class="option-icon">🍜</div>
+                    <div class="option-label">ramen, ano tara?</div>
+                </div>
+                <div class="option-card" onclick="toggleOption('food', 'cake 🍰', this)">
+                    <div class="option-icon">🍰</div>
+                    <div class="option-label">cake, ano tara?</div>
+                </div>
+                <div class="option-card" onclick="toggleOption('food', 'street foods 🌭', this)">
+                    <div class="option-icon">🌭</div>
+                    <div class="option-label">street foods, ano tara?</div>
+                </div>
+                <div class="option-card" onclick="toggleOption('food', 'ice cream 🍦', this)">
+                    <div class="option-icon">🍦</div>
+                    <div class="option-label">ice cream, ano tara?</div>
+                </div>
+            </div>
+            <button class="btn btn-next" onclick="validateAndGo(3, 'food')">next ✨</button>
+        </div>
+
+        <div class="step" id="step3">
+            <h2>ano plano? 🎡</h2>
+            <p>kahit ilan pwede mo piliin</p>
+            <div class="options-grid">
+                <div class="option-card" onclick="toggleOption('activity', 'arcade 🕹️', this)">
+                    <div class="option-icon">🕹️</div>
+                    <div class="option-label">arcade?</div>
+                </div>
+                <div class="option-card" onclick="toggleOption('activity', 'shopping 🛍️', this)">
+                    <div class="option-icon">🛍️</div>
+                    <div class="option-label">shopping, shopping, shopping, shoppiiiinggg </div>
+                </div>
+                <div class="option-card" onclick="toggleOption('activity', 'maging isda🐠', this)">
+                    <div class="option-icon">🐠</div>
+                    <div class="option-label">maging isda</div>
+                </div>
+                <div class="option-card" onclick="toggleOption('activity', 'craft 🎨', this)">
+                    <div class="option-icon">🎨</div>
+                    <div class="option-label">mag drawing? magsulat?</div>
+                </div>
+            </div>
+            <button class="btn btn-next" onclick="validateAndGo(4, 'activity')">next 🌸</button>
+        </div>
+
+        <div class="step" id="step4">
+            <h2>set a sched. po, mahal 📅</h2>
+            <div class="datetime-container">
+                <div class="input-group">
+                    <label for="datePicker">Pick a day in July:</label>
+                    <input type="date" id="datePicker" min="2026-07-01" max="2026-07-31" value="2026-07-18">
+                </div>
+                <div class="input-group">
+                    <label for="timePicker">Pick a time:</label>
+                    <input type="time" id="timePicker" value="14:00">
+                </div>
+            </div>
+            <button class="btn btn-next" onclick="buildFinalSummary()">Finalize Plan 🎉</button>
+        </div>
+
+        <div class="step" id="step5">
+            <h2>It's a Date! 💖</h2>
+            <p>O eto resibo:</p>
+            
+            <div class="receipt-container">
+                <div class="receipt" id="dateReceipt">
+                    <div class="receipt-header">
+                        <div class="receipt-title">LOVE TICKET & RECEIPT</div>
+                        <div class="receipt-subtitle">ORDER ID: #LOVE-2026-JULY</div>
+                    </div>
+                    
+                    <div class="receipt-row flex-row">
+                        <div class="receipt-label">📅 DATE:</div>
+                        <div class="receipt-value" id="rcptDate">July 18, 2026</div>
+                    </div>
+                    <div class="receipt-row flex-row">
+                        <div class="receipt-label">⏰ TIME:</div>
+                        <div class="receipt-value" id="rcptTime">02:00 PM</div>
+                    </div>
+                    
+                    <div class="receipt-divider"></div>
+                    
+                    <div class="receipt-row flex-row">
+                        <div class="receipt-label">🥞 MENU ITEMS:</div>
+                        <div class="receipt-value" id="rcptFood">Pancakes, Gelato</div>
+                    </div>
+                    
+                    <div class="receipt-divider"></div>
+                    
+                    <div class="receipt-row flex-row">
+                        <div class="receipt-label">🎡 ACTIVITIES:</div>
+                        <div class="receipt-value" id="rcptActivity">Arcade Run, Aquarium</div>
+                    </div>
+                    
+                    <div class="receipt-divider"></div>
+                    
+                    <div class="receipt-footer">
+                        TOTAL: 100% NG PAGMAMAHAL 💕
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-download" onclick="downloadReceipt()">DOWNLOAD RECEIPT 📸</button>
+        </div>
+    </div>
+
+    <script>
+        let selections = { food: [], activity: [] };
+
+        function createHeart() {
+            const container = document.getElementById('heartsContainer');
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = ['💖', '💝', '💕', '🌸', '✨'][Math.floor(Math.random() * 5)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            heart.style.fontSize = (Math.random() * 15 + 15) + 'px';
+            container.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+        setInterval(createHeart, 450);
+
+        const noBtn = document.getElementById('noBtn');
+        const container = document.getElementById('btnContainer');
+        
+        function teleportNoButton(e) {
+            if(e) e.preventDefault(); 
+            
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+            const containerWidth = container.offsetWidth;
+            const containerHeight = container.offsetHeight;
+            
+            const maxX = containerWidth - btnWidth;
+            const maxY = containerHeight - btnHeight;
+            
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+            noBtn.style.right = 'auto'; 
+            noBtn.style.left = `${randomX}px`;
+            noBtn.style.top = `${randomY}px`;
+        }
+        
+        noBtn.addEventListener('mouseenter', teleportNoButton);
+        noBtn.addEventListener('click', teleportNoButton);
+        noBtn.addEventListener('touchstart', teleportNoButton, {passive: false});
+
+        function nextStep(stepNumber) {
+            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+            document.getElementById(`step${stepNumber}`).classList.add('active');
+        }
+
+        function toggleOption(category, value, element) {
+            const index = selections[category].indexOf(value);
+            if (index > -1) {
+                selections[category].splice(index, 1);
+                element.classList.remove('selected');
+            } else {
+                selections[category].push(value);
+                element.classList.add('selected');
+            }
+        }
+
+        function validateAndGo(nextStepNum, category) {
+            if (selections[category].length === 0) {
+                alert(`Please pick at least one option! ✨`);
+                return;
+            }
+            nextStep(nextStepNum);
+        }
+
+        function buildFinalSummary() {
+            const chosenDate = document.getElementById('datePicker').value;
+            const chosenTime = document.getElementById('timePicker').value;
+
+            if(!chosenDate) {
+                alert("Please select a date! 📅");
+                return;
+            }
+
+            const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+            const formattedDate = new Date(chosenDate).toLocaleDateString('en-US', options);
+            
+            const [hours, minutes] = chosenTime.split(':');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const cleanHours = hours % 12 || 12;
+            const formattedTime = `${cleanHours}:${minutes} ${ampm}`;
+
+            document.getElementById('rcptDate').innerText = formattedDate;
+            document.getElementById('rcptTime').innerText = formattedTime;
+            document.getElementById('rcptFood').innerText = selections.food.join(', ');
+            document.getElementById('rcptActivity').innerText = selections.activity.join(', ');
+
+            nextStep(5);
+        }
+
+        function downloadReceipt() {
+            const receiptElement = document.getElementById('dateReceipt');
+            html2canvas(receiptElement, {
+                backgroundColor: "#ffffff",
+                scale: 3, 
+                logging: false,
+                useCORS: true
+            }).then(canvas => {
+                const imageURI = canvas.toDataURL('image/jpeg', 0.9);
+                const downloadLink = document.createElement('a');
+                downloadLink.href = imageURI;
+                downloadLink.download = 'cute-date-receipt.jpg';
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            });
+        }
+    </script>
+</body>
+</html>
