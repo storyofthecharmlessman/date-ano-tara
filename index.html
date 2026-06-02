@@ -472,27 +472,29 @@
         const noBtn = document.getElementById('noBtn');
         const container = document.getElementById('btnContainer');
         
-        function teleportNoButton(e) {
-            if(e) e.preventDefault(); 
-            
+        function moveNoButtonRandomly() {
             const btnWidth = noBtn.offsetWidth;
             const btnHeight = noBtn.offsetHeight;
             const containerWidth = container.offsetWidth;
             const containerHeight = container.offsetHeight;
-            
-            const maxX = containerWidth - btnWidth;
-            const maxY = containerHeight - btnHeight;
-            
+            const maxX = Math.max(0, containerWidth - btnWidth);
+            const maxY = Math.max(0, containerHeight - btnHeight);
             const randomX = Math.floor(Math.random() * maxX);
             const randomY = Math.floor(Math.random() * maxY);
-            noBtn.style.right = 'auto'; 
+            noBtn.style.right = 'auto';
             noBtn.style.left = `${randomX}px`;
             noBtn.style.top = `${randomY}px`;
         }
+
+        function teleportNoButton(e) {
+            if (e) e.preventDefault();
+            moveNoButtonRandomly();
+        }
         
         noBtn.addEventListener('mouseenter', teleportNoButton);
+        noBtn.addEventListener('pointerdown', teleportNoButton, { passive: false });
         noBtn.addEventListener('click', teleportNoButton);
-        noBtn.addEventListener('touchstart', teleportNoButton, {passive: false});
+        noBtn.addEventListener('touchstart', teleportNoButton, { passive: false });
 
         function nextStep(stepNumber) {
             document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
