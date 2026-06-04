@@ -396,8 +396,8 @@
             <h2>set a sched. po, mahal 📅</h2>
             <div class="datetime-container">
                 <div class="input-group">
-                    <label for="datePicker">Pick a day in July:</label>
-                    <input type="date" id="datePicker" min="2026-07-01" max="2026-07-31" value="2026-07-18">
+                    <label for="datePicker">Pick a date:</label>
+                    <input type="date" id="datePicker" value="">
                 </div>
                 <div class="input-group">
                     <label for="timePicker">Pick a time:</label>
@@ -454,7 +454,20 @@
     </div>
 
     <script>
-        let selections = { food: [], activity: [] };
+        const selections = { food: [], activity: [] };
+        const datePicker = document.getElementById('datePicker');
+        const timePicker = document.getElementById('timePicker');
+        const noBtn = document.getElementById('noBtn');
+        const btnContainer = document.getElementById('btnContainer');
+
+        function setDefaultDate() {
+            if (!datePicker.value) {
+                const today = new Date();
+                datePicker.value = today.toISOString().slice(0, 10);
+            }
+        }
+
+        setDefaultDate();
 
         function createHeart() {
             const container = document.getElementById('heartsContainer');
@@ -469,14 +482,11 @@
         }
         setInterval(createHeart, 450);
 
-        const noBtn = document.getElementById('noBtn');
-        const container = document.getElementById('btnContainer');
-        
         function moveNoButtonRandomly() {
             const btnWidth = noBtn.offsetWidth;
             const btnHeight = noBtn.offsetHeight;
-            const containerWidth = container.offsetWidth;
-            const containerHeight = container.offsetHeight;
+            const containerWidth = btnContainer.offsetWidth;
+            const containerHeight = btnContainer.offsetHeight;
             const maxX = Math.max(0, containerWidth - btnWidth);
             const maxY = Math.max(0, containerHeight - btnHeight);
             const randomX = Math.floor(Math.random() * maxX);
@@ -521,17 +531,16 @@
         }
 
         function buildFinalSummary() {
-            const chosenDate = document.getElementById('datePicker').value;
-            const chosenTime = document.getElementById('timePicker').value;
+            const chosenDate = datePicker.value;
+            const chosenTime = timePicker.value;
 
-            if(!chosenDate) {
-                alert("Please select a date! 📅");
+            if (!chosenDate) {
+                alert('Please select a date! 📅');
                 return;
             }
 
             const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
             const formattedDate = new Date(chosenDate).toLocaleDateString('en-US', options);
-            
             const [hours, minutes] = chosenTime.split(':');
             const ampm = hours >= 12 ? 'PM' : 'AM';
             const cleanHours = hours % 12 || 12;
